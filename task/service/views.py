@@ -1,7 +1,10 @@
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
 from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 from service.models import (
     Restaurent,
     Branch, 
@@ -46,17 +49,16 @@ def placeOrder(request):
             print("orderQuantity",orderQuantity)
             orderFoodItem = orderItem['orderFoodItemId']
             orderQuantity = orderItem['quantity']
-            # instance = FoodItem.objects.filter(branch_id=orderedBranch, id=orderFoodItem)
-            instance = FoodItem.objects.all()
-            instanceSerializer = FoodItemSerializer(instance,many = True)
-            instance[0].quantity = instance[0].quantity - orderQuantity
-            print("instance[0].quantity",instanceSerializer.data)
-
-            serializer = FoodItemSerializer(data = instance)
-
+            instance = FoodItem.objects.filter(branch_id=orderedBranch, id=orderFoodItem)
+            finalQuantity = instance[0].quantity - orderQuantity
+            serializer = FoodItemSerializer(instance[0],data = {"quantity":finalQuantity},partial = True)
+            print(serializer.is_valid())
             if serializer.is_valid():
                 serializer.save()
             else:
                 return JsonResponse(serializer.errors,status = 400)
-        
+        # updateData = FoodItem.objects.filter(branch_id=orderedBranch)
+        # finalSerializer = FoodItemSerializer(updateData,many = True)
+        # json = JSONRenderer().render(finalSerializer.data)
+        return JsonResponse({"message":"Order Placed"},status = 200)
 

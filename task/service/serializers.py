@@ -8,8 +8,22 @@ from service.models import (
     )
 
 
+
+class BranchSerializer(serializers.ModelSerializer):
+    #foodItems = FoodItemSerializer(many=True)
+    #restaurent = serializers.CharField(source = "restaurent.name",read_only= True)
+    class Meta:
+        model = Branch
+        fields = ('id',
+                  'name',
+                  'address',
+                  'pincode',
+                  'foodItems',
+                )
+
+
 class FoodItemSerializer(serializers.ModelSerializer):
-    branch = serializers.CharField(source = "branch.name",read_only= True)
+    #branch_name = serializers.CharField(source = "branch.name",read_only=True)
 
     class Meta:
         model = FoodItem
@@ -30,16 +44,4 @@ class RestaurentSerializer(serializers.ModelSerializer):
                 )
 
 
-class BranchSerializer(serializers.ModelSerializer):
-    foodItems = FoodItemSerializer(many=True)
-    restaurent = serializers.CharField(source = "restaurent.name",read_only= True)
-    class Meta:
-        model = Branch
-        fields = ('id',
-                  'name',
-                  'address',
-                  'pincode',
-                  'foodItems',
-                  'restaurent'
-                )
 
